@@ -13,3 +13,6 @@ Multi target:
 
 https://github.com/PoLsss/video-augmented-reality/assets/98370447/2cdca8a3-4f91-4c75-b0d9-275ffa0194e3
 
+And there are some more interesting demos.
+---
+This is a subject project, the result of the work of team members.
