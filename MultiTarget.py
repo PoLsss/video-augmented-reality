@@ -1,23 +1,40 @@
 import numpy as np
 import cv2
+from argparse import ArgumentParser
 
-url = "http://10.4.105.218:8080/video"
-cap = cv2.VideoCapture(url)
+# url = "http://10.4.105.218:8080/video"
+def get_args():
+    parser = ArgumentParser(description='')
+    parser.add_argument('--image-path1', type=str, default='./img/cat.png', help='Your path to image 1')
+    parser.add_argument("--video-path1",  type=str, default='./gif/cat.gif', help='Your path to video 1')
 
-imgTarget = cv2.imread('img/cat.png')
-imgTarget1 = cv2.imread('img/golila.png')
-imgTarget2 = cv2.imread('img/anh_shiba.png')
-imgTarget3 = cv2.imread('img/tik.png')
+    parser.add_argument('--image-path2', type=str, default='./img/golila.png', help='Your path to image 2')
+    parser.add_argument("--video-path2",  type=str, default='./gif/kingkong1.mp4', help='Your path to video 2')
 
-# imgTarget = cv2.resize(imgTarget, (500,500))
-# imgTarget1 = cv2.resize(imgTarget1, (500,500))
-# imgTarget2 = cv2.resize(imgTarget2, (500,500))
-# imgTarget3 = cv2.resize(imgTarget3, (500,500))
+    parser.add_argument('--image-path3', type=str, default='./img/anh_shiba.png', help='Your path to image 3')
+    parser.add_argument("--video-path3",  type=str, default='./gif/gif-Shiba-nhay-1.gif', help='Your path to video 3')
 
-myVid = cv2.VideoCapture('gif/cat.gif')
-myVid1 = cv2.VideoCapture('gif/kingkong1.mp4')
-myVid2 = cv2.VideoCapture('gif/gif-Shiba-nhay-1.gif')
-myVid3 = cv2.VideoCapture('gif/tik.mp4')
+    parser.add_argument('--image-path4', type=str, default='./img/tik.png', help='Your path to image 4')
+    parser.add_argument("--video-path4",  type=str, default='./gif/tik.mp4', help='Your path to video 4')
+
+    parser.add_argument('--threshold', type=int, default=20, help='Threshold to render video')
+    args = parser.parse_args()
+    return args
+
+args = get_args()
+
+cap = cv2.VideoCapture(0)
+
+imgTarget = cv2.imread(args.image_path1)
+imgTarget1 = cv2.imread(args.image_path2)
+imgTarget2 = cv2.imread(args.image_path3)
+imgTarget3 = cv2.imread(args.image_path4)
+
+
+myVid = cv2.VideoCapture(args.video_path1)
+myVid1 = cv2.VideoCapture(args.video_path2)
+myVid2 = cv2.VideoCapture(args.video_path3)
+myVid3 = cv2.VideoCapture(args.video_path4)
 
 
 detection = False
@@ -132,7 +149,7 @@ while True:
     imgFeatures2 = cv2.drawMatches(imgTarget2, kp_2, imgWebcam, kp2, good2, None, flags=2)
     imgFeatures3 = cv2.drawMatches(imgTarget3, kp_3, imgWebcam, kp2, good3, None, flags=2)
 
-    if len(good) > 20 :
+    if len(good) > args.threshold :
         detection = True
         srcPts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
         dstPts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
@@ -151,7 +168,7 @@ while True:
         imgAug = cv2.bitwise_and(imgAug, imgAug, mask = maskInv)
         imgAug = cv2.bitwise_or(imgWarp, imgAug)
 
-    if len(good1) > 20 :
+    if len(good1) > args.threshold :
         detection1 = True
         srcPts1 = np.float32([kp_1[m.queryIdx].pt for m in good1]).reshape(-1, 1, 2)
         dstPts1 = np.float32([kp2[m.trainIdx].pt for m in good1]).reshape(-1, 1, 2)
@@ -170,7 +187,7 @@ while True:
         imgAug = cv2.bitwise_and(imgAug, imgAug, mask = maskInv1)
         imgAug = cv2.bitwise_or(imgWarp1, imgAug)
 
-    if len(good2) > 20 :
+    if len(good2) > args.threshold :
         detection2 = True
         srcPts2 = np.float32([kp_2[m.queryIdx].pt for m in good2]).reshape(-1, 1, 2)
         dstPts2 = np.float32([kp2[m.trainIdx].pt for m in good2]).reshape(-1, 1, 2)
@@ -189,7 +206,7 @@ while True:
         imgAug = cv2.bitwise_and(imgAug, imgAug, mask = maskInv2)
         imgAug = cv2.bitwise_or(imgWarp2, imgAug)
 
-    if len(good3) > 20 :
+    if len(good3) > args.threshold :
         detection3 = True
         srcPts3 = np.float32([kp_3[m.queryIdx].pt for m in good3]).reshape(-1, 1, 2)
         dstPts3 = np.float32([kp2[m.trainIdx].pt for m in good3]).reshape(-1, 1, 2)
