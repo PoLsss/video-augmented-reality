@@ -1,12 +1,24 @@
 import numpy as np
 import cv2
+from argparse import ArgumentParser
 
-url = "http://10.4.105.218:8080/video"
-cap = cv2.VideoCapture(url)
+def get_args():
+    parser = ArgumentParser(description='')
+    parser.add_argument('--image-path', type=str, default='./img/cat.png', help='Your path to image')
+    parser.add_argument("--video-path",  type=str, default='./gif/cat.gif', help='Your path to video')
+    parser.add_argument('--threshold', type=int, default=20, help='Threshold to render video')
+    args = parser.parse_args()
+    return args
 
-imgTarget = cv2.imread('img/cat.png')
+args = get_args()
+
+# url = "http://10.4.105.218:8080/video"
+
+cap = cv2.VideoCapture(0)
+
+imgTarget = cv2.imread(args.image_path)
 imgTarget = cv2.resize(imgTarget, (500,500))
-myVid = cv2.VideoCapture('gif/cat.gif')
+myVid = cv2.VideoCapture(args.video_path)
 detection = False
 frameCounter = 0
 
@@ -46,7 +58,7 @@ while True:
     print(len(good))
     imgFeatures = cv2.drawMatches(imgTarget, kp1, imgWebcam, kp2, good, None, flags = 2)
 
-    if len(good) > 20 :
+    if len(good) > args.threshold :
         detection = True
         srcPts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
         dstPts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
@@ -66,8 +78,8 @@ while True:
         imgAug = cv2.bitwise_or(imgWarp, imgAug)
 
     cv2.imshow('imgAug1', imgAug)
-    cv2.imshow('imgWarp', imgWarp)
 
+    # cv2.imshow('imgWarp', imgWarp)
     # cv2.imshow('img2', img2)
     # cv2.imshow('imgFeatures1', imgFeatures)
     # cv2.imshow('ImgTarget', imgTarget)
